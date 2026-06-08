@@ -2,7 +2,6 @@ package com.example.speed;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -15,29 +14,14 @@ public class SpeedModule implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        keyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        // Регистрация клавиши без Fabric API (но Fabric Loader позволяет использовать KeyBinding напрямую)
+        keyBind = new KeyBinding(
                 "key.speed.toggle",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
                 "category.speed"
-        ));
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (keyBind.wasPressed()) {
-                toggled = !toggled;
-                if (!toggled) {
-                    ticks = 0;
-                    groundTicks = 0;
-                    TimerManager.setTimer(1.0F);
-                }
-            }
-        });
-        EventManager.register();
+        );
+        // Регистрация через Fabric Loader (без Fabric API) – на самом деле ClientTickEvents есть в fabric-loader? Нет, он в fabric-api.
+        // Но мы заменим на миксин.
     }
-
-    public static boolean isEnabled() { return toggled; }
-    public static int getTicks() { return ticks; }
-    public static void incTicks() { ticks++; }
-    public static int getGroundTicks() { return groundTicks; }
-    public static void setGroundTicks(int v) { groundTicks = v; }
-    public static void incGroundTicks() { groundTicks++; }
 }
