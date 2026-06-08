@@ -18,8 +18,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.8'
+      - name: Clean cache (fix for missing deps)
+        run: rm -rf ~/.gradle/caches/fabric-loom
       - name: Build
-        run: gradle build
+        run: gradle build --refresh-dependencies
       - uses: actions/upload-artifact@v4
         with:
           name: speed-mod
